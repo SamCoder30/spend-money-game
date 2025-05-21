@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Spend Bill Gates' Money</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 36px;
+      margin-bottom: 10px;
+    }
+
+    #balance {
+      font-size: 24px;
+      margin: 20px 0;
+      font-weight: bold;
+    }
+
+    #search-bar {
+      margin-bottom: 20px;
+      padding: 8px;
+      width: 300px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    .categories {
+      margin-bottom: 20px;
+    }
+
+    .category-btn {
+      background-color: #ddd;
+      border: none;
+      padding: 8px 15px;
+      margin: 0 5px 10px 5px;
+      cursor: pointer;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+
+    .category-btn.active {
+      background-color: #4caf50;
+      color: white;
+    }
+
+    .items-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .item {
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      width: 200px;
+      margin: 10px;
+      padding: 15px;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+      position: relative;
+    }
+    .item:hover {
+      transform: scale(1.05);
+    }
+
+    .item img {
+      width: 100px;
+      height: 100px;
+      object-fit: contain;
+    }
+
+    .item h3 {
+      margin: 10px 0 5px;
+    }
+
+    .item p {
+      margin: 5px 0;
+    }
+
+    .item button {
+      padding: 5px 10px;
+      margin: 5px;
+      cursor: pointer;
+    }
+
+    .buy-btn {
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+
+    .sell-btn {
+      background-color: #f44336;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+
+    /* Animation classes */
+    .animate-buy {
+      animation: buyEffect 0.5s ease;
+    }
+    .animate-sell {
+      animation: sellEffect 0.5s ease;
+    }
+
+    @keyframes buyEffect {
+      0% { background-color: #4caf50; transform: scale(1); }
+      50% { background-color: #81c784; transform: scale(1.1); }
+      100% { background-color: #fff; transform: scale(1); }
+    }
+
+    @keyframes sellEffect {
+      0% { background-color: #f44336; transform: scale(1); }
+      50% { background-color: #e57373; transform: scale(0.9); }
+      100% { background-color: #fff; transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Spend Bill Gates' Money</h1>
+  <div id="balance">Balance: $100,000,000,000</div>
+
+  <input type="text" id="search-bar" placeholder="Search items..." />
+
+  <div class="categories" id="categories">
+    <button class="category-btn active" data-category="all">All</button>
+    <button class="category-btn" data-category="food">Food</button>
+    <button class="category-btn" data-category="vehicles">Vehicles</button>
+    <button class="category-btn" data-category="luxury">Luxury</button>
+    <button class="category-btn" data-category="tech">Tech</button>
+    <button class="category-btn" data-category="real-estate">Real Estate</button>
+  </div>
+
+  <div class="items-container" id="items-container"></div>
+
+  <!-- Sound effects -->
+  <audio id="buy-sound" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg" preload="auto"></audio>
+  <audio id="sell-sound" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg" preload="auto"></audio>
+
+  <script>
+    const items = [
+      // Food
+      { name: 'Big Mac', price: 2, image: 'https://neal.fun/spend/images/big-mac.jpg', category: 'food', quantity: 0 },
+      { name: 'Pizza Slice', price: 3, image: 'https://upload.wikimedia.org/wikipedia/commons/d/d3/Supreme_pizza.jpg', category: 'food', quantity: 0 },
+      { name: 'Cup of Coffee', price: 4, image: 'https://upload.wikimedia.org/wikipedia/commons/4/45/A_small_cup_of_coffee.JPG', category: 'food', quantity: 0 },
+
+      // Vehicles
+      { name: 'Bicycle', price: 500, image: 'https://neal.fun/spend/images/bike.jpg', category: 'vehicles', quantity: 0 },
+      { name: 'Car', price: 20000, image: 'https://neal.fun/spend/images/car.jpg', category: 'vehicles', quantity: 0 },
+      { name: 'Supercar', price: 2000000, image: 'https://neal.fun/spend/images/supercar.jpg', category: 'vehicles', quantity: 0 },
+
+      // Luxury
+      { name: 'Flip Flops', price: 3, image: 'https://neal.fun/spend/images/flip-flops.jpg', category: 'luxury', quantity: 0 },
+      { name: 'House', price: 300000, image: 'https://neal.fun/spend/images/house.jpg', category: 'luxury', quantity: 0 },
+      { name: 'Private Jet', price: 15000000, image: 'https://neal.fun/spend/images/private-jet.jpg', category: 'luxury', quantity: 0 },
+      { name: 'Yacht', price: 75000000, image: 'https://neal.fun/spend/images/yacht.jpg', category: 'luxury', quantity: 0 },
+      { name: 'NBA Team', price: 2200000000, image: 'https://neal.fun/spend/images/nba.jpg', category: 'luxury', quantity: 0 },
+
+      // Tech
+      { name: 'Smartphone', price: 1000, image: 'https://neal.fun/spend/images/smartphone.jpg', category: 'tech', quantity: 0 },
+      { name: 'Gaming PC', price: 2500, image: 'https://upload.wikimedia.org/wikipedia/commons/0/03/PC_Gaming_Setup.jpg', category: 'tech', quantity: 0 },
+      { name: 'VR Headset', price: 400, image: 'https://upload.wikimedia.org/wikipedia/commons/0/02/Oculus_Quest_2_with_headphones.jpg', category: 'tech', quantity: 0 },
+
+      // Real Estate
+      { name: 'Luxury Apartment', price: 1000000, image: 'https://upload.wikimedia.org/wikipedia/commons/5/5e/Luxury_condo.JPG', category: 'real-estate', quantity: 0 },
+      { name: 'Mansion', price: 5000000, image: 'https://upload.wikimedia.org/wikipedia/commons/e/ef/House_in_Arlington,_Virginia.jpg', category: 'real-estate', quantity: 0 },
+      { name: 'Private Island', price: 20000000, image: 'https://upload.wikimedia.org/wikipedia/commons/f/f3/Necker_Island_2016-04-30_IMG_7162.jpg', category: 'real-estate', quantity: 0 }
+    ];
+
+    let balance = 100000000000;
+    let activeCategory = 'all';
+
+    function updateBalance() {
+      document.getElementById('balance').innerText = `Balance: $${balance.toLocaleString()}`;
+    }
+
+    function createItemCard(item, index) {
+      const itemDiv = document.createElement('div');
+      itemDiv.className = 'item';
+
+      itemDiv.innerHTML = `
+        <img src="${item.image}" alt="${item.name}">
+        <h3>${item.name}</h3>
+        <p>Price: $${item.price.toLocaleString()}</p>
+        <p id="qty-${index}">Quantity: ${item.quantity}</p>
+        <button class="buy-btn" onclick="buyItem(${index}, this)">Buy</button>
+        <button class="sell-btn" onclick="sellItem(${index}, this)">Sell</button>
+      `;
+
+      return itemDiv;
+    }
+
+    function animateButton(button, animationClass) {
+      button.parentElement.classList.add(animationClass);
+      setTimeout(() => {
+        button.parentElement.classList.remove(animationClass);
+      }, 500);
+    }
+
+    function playSound(id) {
+      const sound = document.getElementById(id);
+      if(sound) {
+        sound.currentTime = 0;
+        sound.play();
+      }
+    }
+
+    function buyItem(index, button) {
+      const item = items[index];
+      if (balance >= item.price) {
+        balance -= item.price;
+        item.quantity += 1;
+        updateBalance();
+        document.getElementById(`qty-${index}`).innerText = `Quantity: ${item.quantity}`;
+        animateButton(button, 'animate-buy');
+        playSound('buy-sound');
+      } else {
+        alert("Not enough money!");
+      }
+    }
+
+    function sellItem(index, button) {
+      const item = items[index];
+      if (item.quantity > 0) {
+        balance += item.price;
+        item.quantity -= 1;
+        updateBalance();
+        document.getElementById(`qty-${index}`).innerText = `Quantity: ${item.quantity}`;
+        animateButton(button, 'animate-sell');
+        playSound('sell-sound');
+      } else {
+        alert("You don’t have any to sell!");
+      }
+    }
+
+    function filterItems() {
+      const container = document.getElementById('items-container');
+      container.innerHTML = '';
+
+      const searchTerm = document.getElementById('search-bar').value.toLowerCase();
+
+      items.forEach((item, index) => {
+        const matchesCategory = (activeCategory === 'all') || (item.category === activeCategory);
+        const matchesSearch = item.name.toLowerCase().includes(searchTerm);
+
+        if (matchesCategory && matchesSearch) {
+          container.appendChild(createItemCard(item, index));
+        }
+      });
+    }
+
+    document.getElementById('search-bar').addEventListener('input', () => {
+      filterItems();
+    });
+
+    document.querySelectorAll('.category-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        activeCategory = btn.getAttribute('data-category');
+        filterItems();
+      });
+    });
+
+    updateBalance();
+    filterItems();
+  </script>
+</body>
+</html>
